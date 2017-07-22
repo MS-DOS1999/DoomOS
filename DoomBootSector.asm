@@ -10,10 +10,10 @@ message db "BootSector is Doomed", 18, 10, 0
 
 ;on init la zone du bootSecteur et on defini la zone de la Stack
 
-	mov ax, 0x07C00 ;on met une donnée dans l'accumulateur, ici l'adresse mémoire ou doit commencer le boot sector
+	mov ax, 0x07C0 ;on met une donnée dans l'accumulateur, ici l'adresse mémoire ou doit commencer le boot sector
 	mov ds, ax
 	mov es, ax ;on initialise les registres qui donne le départ du boot sector, ds et es, avec la bonne adresse mémoire
-	mov ax, 0x80000
+	mov ax, 0x8000
 	mov ss, ax ;on defini le debut de la pile
 	mov ax, 0xF000
 	mov sp, ax ;et on defini ça taille et donc son debut
@@ -38,7 +38,7 @@ afficher:
 	mov bx, 0x07 ;in stock l'attribut des caractère: couleurs, tailles
 	int 0x10 ;et bim ! on appelle m'interupt 0x10 qui permet d'afficher des caractères
 	jmp .debut; et on reviens au debut pour voir si y a encore des caractère à afficher
-.fin
+.fin:
 	pop ax
 	pop bx
 	ret
