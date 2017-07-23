@@ -1,7 +1,7 @@
 ;DoomOS BootSector
 ;By Julien Magnin a.k.a MSDOS
 %define BASE	0x100 ;0x0100:0x0 = 0x01000
-%define KSIZE	1
+%define KSIZE	50
 
 
 [BITS 16] ;on bosse en 16bit
@@ -46,15 +46,48 @@ start:
 	;ici on a copié le ou les secteurs du périphérique dont on a besoins pour le noyau grace à l'interupt 0x13 qui permet de copié plusieur secteur dans la RAM
 	;ici on defini le debut du stockage du noyau à 0x01000(BASE) et on copie un seul secteur(KSIZE)
 	
-	;on saute à l'adresse du noyau pour le lancer
-	jmp BASE:0 ; je rappelle que 0x0100:0x0 = 0x01000
+	mov ax, gdtend
+	mov bx, gdt
+	sub ax, bx
+	mov word [gdtptr], ax ;on a calculer la limite de la GDT
 	
+	xor eax, eax
+	xor ebx, ebx
+	mov ax, ds
+	mov ecx, eax
+	shl ecx, 4
+	mov bx, gdt
+	add ecx, ebx
+	mov dword [gdtptr+2], ecx ;et ici, on a calculé l'adresse linéaire de la gdt
 	
+	;on passe en mode protégé
+	cli
+	lgdt [gdtptr] ;on charge la gdt
+	mov eax, cr0
+	or ax, 1
+	mov cr0, eax ;activation du mode protégé
+	jmp next
+	
+next:
+	mov ax, 0x10
+	mov ds, ax
+	mov fs, ax
+	mov gs, ax
+	mov es, ax
+	mov ss, ax
+	mov esp, 0x9F000
+	
+	jmp dword 0x8:0x1000
 	
 ;variable
-	message: db "BootSector is Doomed", 0
+	message: db "BootSector load the kernel", 0
 	bootdrv: db 0
-	
+	gdt: db 0,0,0,0,0,0,0,0
+	gdt_cs: db 0xFF, 0xFF, 0x0, 0x0, 0x0, 10011011b, 11011111b, 0x0
+	gdt_ds: db 0xFF, 0xFF, 0x0, 0x0, 0x0, 10010011b, 11011111b, 0x0
+	gdtend:
+	gdtptr: dw 0
+			dd 0
 ;on charge de NOP pour atteindre 512 octets
 	times 510-($-$$) db 144 ;on met 510 NOP: opcode 144
 	dw 0xAA55 ;et les deux dernier octet doivent-etre cette adresse pour specifier qu'on est en MBR Master Boot Record

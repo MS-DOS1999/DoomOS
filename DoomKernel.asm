@@ -1,26 +1,17 @@
-[BITS 16]
-[ORG 0x0]
+[BITS 32]
+[ORG 0x1000]
 
-	jmp start
-%include "FUNC.INC"
-
-start:
-
-    mov ax, 0x100
-    mov ds, ax
-    mov es, ax
-
-
-    mov ax, 0x8000
-    mov ss, ax
-    mov sp, 0xf000
-
-
-    mov si, msg00
-    call afficher
+; Affichage d'un message par ecriture dans la RAM video
+    mov byte [0xB8A00], 'H'
+    mov byte [0xB8A01], 0x08
+    mov byte [0xB8A02], 'E'
+    mov byte [0xB8A03], 0x0A
+    mov byte [0xB8A04], 'L'
+    mov byte [0xB8A05], 0x02
+    mov byte [0xB8A06], 'L'
+    mov byte [0xB8A07], 0x04
+    mov byte [0xB8A08], 'O'
+    mov byte [0xB8A09], 0x0E
 
 end:
     jmp end
-
-
-msg00: db 'Je suis le Kernel, Noraj !', 0
