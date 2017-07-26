@@ -80,7 +80,7 @@ next:
 	jmp dword 0x8:0x1000
 	
 ;variable
-	message: db "BootSector load the kernel", 0
+	message: db "BootSector load the kernel", 13, 10, 0
 	bootdrv: db 0
 	gdt: db 0,0,0,0,0,0,0,0
 	gdt_cs: db 0xFF, 0xFF, 0x0, 0x0, 0x0, 10011011b, 11011111b, 0x0
