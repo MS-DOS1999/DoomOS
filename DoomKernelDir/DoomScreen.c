@@ -34,8 +34,6 @@ void scrollupDoom(doom32 n){
 void putcharDoom(doom8 c){
 	doom8 *video;
 	
-	doom32 i;
-	
 	if(c == 10){
 		kX = 0;
 		kY++;
