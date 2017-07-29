@@ -1,5 +1,8 @@
 #include "DoomTypes.h"
 #include "DoomGDT.h"
+#include "DoomScreen.h"
+#include "DoomIO.h"
+#include "DoomIDT.h"
 
 extern void scrollupDoom(doom32);
 extern void putsDoom(doom8 *);
@@ -7,15 +10,43 @@ extern void putsDoom(doom8 *);
 extern doom8 kY;
 extern doom8 kattr;
 
+void init_pic();
+
 int main();
 
 void _start(){
 	
         kY = 1;
+		
+		kattr = 0x4E;
+        putsDoom("DoomKernel >");
+        kattr = 0x04;
+        putsDoom(" Loading IDT...\n");
+		
+		init_idt();
+		
+		kattr = 0x4E;
+        putsDoom("DoomKernel >");
+        kattr = 0x04;
+        putsDoom(" IDT loaded !\n");
+		
+		kattr = 0x4E;
+        putsDoom("DoomKernel >");
+        kattr = 0x04;
+        putsDoom(" PIC initialization...\n");
+		
+		init_pic();
+		
+		kattr = 0x4E;
+        putsDoom("DoomKernel >");
+        kattr = 0x04;
+        putsDoom(" PIC initialized !\n");
+		
+		
         kattr = 0x4E;
         putsDoom("DoomKernel >");
         kattr = 0x04;
-        putsDoom(" Loading new gdt...\n");
+        putsDoom(" Loading new GDT...\n");
 		
 		//init de la gdt et des segments
 		init_gdt();
@@ -34,7 +65,16 @@ int main(){
 	kattr = 0x4E;
 	putsDoom("DoomKernel >");
 	kattr = 0x04;
-	putsDoom(" New gdt loaded !\n");
+	putsDoom(" New GDT loaded !\n");
+	
+	sti; //active interrupt
+	
+	kattr = 0x4E;
+    putsDoom("DoomKernel >");
+    kattr = 0x04;
+    putsDoom(" Allowing interrupt\n");
+	kattr = 0x07;
+	
 	while(1);
 	
 }
