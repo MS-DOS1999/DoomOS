@@ -24,6 +24,7 @@ void isr_kbd_int(){
 	static doom32 rshift_enable;
 	static doom32 alt_enable;
 	static doom32 ctrl_enable;
+	static doom32 keyboardCounter = 0;
 	
 	do{
 		
@@ -34,7 +35,30 @@ void isr_kbd_int(){
 	i = inb(0x60);
 	i--;
 	
-	if(i < 80){
+	if((i == 0x0D)){
+		if(keyboardCounter > 0){
+			if(kX == 0){
+				kX = 79;
+				kY--;
+			}
+			else{
+				kX--;
+			}
+		
+			putcharDoom(' ');
+		
+			if(kX == 0){
+				kX = 79;
+				kY--;
+			}
+			else{
+				kX--;
+			}
+		
+			keyboardCounter--;
+		}
+	}
+	else if(i < 80){
 		switch(i){
 			case 0x29:
 				lshift_enable = 1;
@@ -49,6 +73,7 @@ void isr_kbd_int(){
 				alt_enable = 1;
 				break;
 			default:
+				keyboardCounter++;
 				putcharDoom(kbdmap[i * 4 + (lshift_enable || rshift_enable)]);
 				break;
 		}
