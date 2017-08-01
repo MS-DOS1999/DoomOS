@@ -1,5 +1,5 @@
 OBJ=DoomKernel
-CC=gcc -m32 -Wall -Wno-pointer-sign
+CC=gcc -m32 -Wall -Wno-pointer-sign -Wno-unused-but-set-variable
 
 all: $(OBJ) 
 

@@ -1,4 +1,5 @@
 #include "DoomTypes.h"
+#include "DoomIO.h"
 
 #define __SCREEN__
 #include "DoomScreen.h"
@@ -61,4 +62,21 @@ void putsDoom(doom8 *string){
 		putcharDoom(*string);
 		string++;
 	}
+}
+
+void move_cursorDoom(doom8 x, doom8 y){
+	
+	doom16 c_pos;
+	
+	c_pos = y * 80 + x;
+	
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, (doom8) c_pos);
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (doom8) (c_pos >> 8));
+	
+}
+
+void show_cursorDoom(){
+	move_cursorDoom(kX, kY);
 }

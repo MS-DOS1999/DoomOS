@@ -1,5 +1,7 @@
 #include "DoomTypes.h"
 #include "DoomScreen.h"
+#include "DoomKeyboard.h"
+#include "DoomIO.h"
 
 void isr_default_int(){
 	putsDoom("interrupt\n");
@@ -12,10 +14,67 @@ void isr_clock_int(){
 	if(tic % 100 == 0){
 		sec++;
 		tic = 0;
-		putsDoom("clock\n");
 	}
 }
 
 void isr_kbd_int(){
-	putsDoom("keyboard\n");
+	
+	doom8 i;
+	static doom32 lshift_enable;
+	static doom32 rshift_enable;
+	static doom32 alt_enable;
+	static doom32 ctrl_enable;
+	
+	do{
+		
+		i = inb(0x64);
+		
+	}while((i & 0x01) == 0);
+	
+	i = inb(0x60);
+	i--;
+	
+	if(i < 80){
+		switch(i){
+			case 0x29:
+				lshift_enable = 1;
+				break;
+			case 0x35:
+				rshift_enable = 1;
+				break;
+			case 0x1C:
+				ctrl_enable = 1;
+				break;
+			case 0x37:
+				alt_enable = 1;
+				break;
+			default:
+				putcharDoom(kbdmap[i * 4 + (lshift_enable || rshift_enable)]);
+				break;
+		}
+	}
+	else{
+		
+		i -= 0x80;
+		switch(i){
+			case 0x29:
+				lshift_enable = 0;
+				break;
+			case 0x35:
+				rshift_enable = 0;
+				break;
+			case 0x1C:
+				ctrl_enable = 0;
+				break;
+			case 0x37:
+				alt_enable = 0;
+				break;
+		}
+	}
+	
+	show_cursorDoom();
 }
+
+
+
+

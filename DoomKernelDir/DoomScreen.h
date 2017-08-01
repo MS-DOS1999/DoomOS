@@ -21,4 +21,5 @@ extern doom8 kattr;
 void scrollupDoom(doom32);
 void putcharDoom(doom8);
 void putsDoom(doom8*);
-
+void move_cursorDoom(doom8, doom8);
+void show_cursorDoom();

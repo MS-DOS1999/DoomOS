@@ -74,6 +74,7 @@ int main(){
     kattr = 0x04;
     putsDoom(" Allowing interrupt\n");
 	kattr = 0x07;
+	show_cursorDoom();
 	
 	while(1);
 	
